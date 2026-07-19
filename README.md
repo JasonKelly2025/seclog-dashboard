@@ -67,7 +67,9 @@ The app deploys as two services that auto-update on every `git push` to `main`:
 1. **Backend on Render** — the included `render.yaml` blueprint defines the FastAPI service. In the Render dashboard choose *New → Blueprint*, pick this repo, and deploy. Note the service URL (e.g. `https://seclog-dashboard-api.onrender.com`).
 2. **Frontend on Vercel** — import the repo in Vercel, set the **Root Directory** to `frontend`, and add an environment variable `BACKEND_URL` pointing at the Render URL. The Next.js server proxies all `/api/*` calls to it, so no CORS changes are needed.
 
-> The free Render tier has an ephemeral disk: uploaded logs are lost when the service restarts or redeploys. Re-upload the sample files, or switch to hosted Postgres for persistence.
+> Set `DATABASE_URL` on the Render service to a hosted Postgres connection string (e.g. from [Neon](https://neon.tech)) so data persists across deploys and restarts. Without it, the backend falls back to SQLite on an ephemeral disk.
+>
+> The backend seeds the bundled sample logs whenever the database is empty (on startup and after a reset), so the demo data set is always visible.
 
 ## API
 
@@ -76,7 +78,7 @@ The app deploys as two services that auto-update on every `git push` to `main`:
 | POST | `/api/upload` | Multipart file upload; parses, scores, and stores entries |
 | GET | `/api/logs` | Search/filter/sort/paginate entries (`q`, `severity`, `min_score`, `sort_by`, `page`…) |
 | GET | `/api/stats` | Severity breakdown, riskiest IPs and accounts |
-| DELETE | `/api/logs` | Clear all entries (requires `X-Admin-Key` header when `ADMIN_KEY` is set) |
+| DELETE | `/api/logs` | Reset: clear all entries and re-seed sample data (requires `X-Admin-Key` header when `ADMIN_KEY` is set) |
 
 ## Admin key
 

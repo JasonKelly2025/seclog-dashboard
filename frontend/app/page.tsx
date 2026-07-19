@@ -74,7 +74,9 @@ export default function Dashboard() {
   }
 
   async function handleClear() {
-    const adminKey = prompt("Enter the admin key to delete all log entries:");
+    const adminKey = prompt(
+      "Enter the admin key to reset the dashboard (deletes all entries and restores the sample data):"
+    );
     if (adminKey === null) return;
     try {
       await clearLogs(adminKey);
@@ -100,7 +102,7 @@ export default function Dashboard() {
           onClick={handleClear}
           className="rounded-lg border border-red-500/40 px-3 py-1.5 text-sm text-red-400 hover:bg-red-500/10"
         >
-          Clear all
+          Reset data
         </button>
       </header>
 

@@ -12,3 +12,5 @@ services:
         value: 3.12.10
       - key: ADMIN_KEY
         sync: false
+      - key: DATABASE_URL
+        sync: false

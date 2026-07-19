@@ -9,11 +9,15 @@ from sqlalchemy import desc, func, or_
 from sqlalchemy.orm import Session
 
 from . import models, schemas
-from .database import Base, engine, get_db
+from .database import Base, SessionLocal, engine, get_db
 from .parser import ParseError, parse_file
 from .scoring import score_batch
+from .seed import seed_if_empty
 
 Base.metadata.create_all(bind=engine)
+
+with SessionLocal() as _db:
+    seed_if_empty(_db)
 
 app = FastAPI(title="SecLog Dashboard API", version="1.0.0")
 
@@ -183,7 +187,9 @@ def clear_logs(
         raise HTTPException(status_code=403, detail="Invalid admin key.")
     deleted = db.query(models.LogEntry).delete()
     db.commit()
-    return {"deleted": deleted}
+    # Restore the demo data so the dashboard is never left empty.
+    seeded = seed_if_empty(db)
+    return {"deleted": deleted, "seeded": seeded}
 
 
 @app.get("/api/health")

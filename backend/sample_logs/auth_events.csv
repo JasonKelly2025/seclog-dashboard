@@ -20,4 +20,4 @@ timestamp,source_ip,username,event_type,status,message
 2026-07-19T02:19:08,91.240.118.172,svc_backup,config_change,success,Windows Defender real-time protection disabled
 2026-07-19T02:25:41,91.240.118.172,svc_backup,file_transfer,success,Large outbound data transfer detected - possible exfiltration
 2026-07-18T14:05:33,10.0.4.22,bob,file_access,denied,Access denied to /etc/shadow
-2026-07-18T15:11:09,10.0.4.40,eve,web_request,blocked,Blocked request containing SQL injection payload ' OR 1=1--
+2026-07-18T15:11:09,10.0.4.40,eve,web_request,blocked,Blocked request containing SQL injection attempt against login form

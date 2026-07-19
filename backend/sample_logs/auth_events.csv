@@ -1,0 +1,23 @@
+timestamp,source_ip,username,event_type,status,message
+2026-07-18T08:12:03,10.0.4.21,alice,login,success,User alice logged in successfully from workstation
+2026-07-18T08:15:44,10.0.4.22,bob,login,success,User bob logged in successfully
+2026-07-18T09:02:11,185.220.101.34,admin,login,failed,Failed login attempt for admin - invalid password
+2026-07-18T09:02:14,185.220.101.34,admin,login,failed,Failed login attempt for admin - invalid password
+2026-07-18T09:02:17,185.220.101.34,root,login,failed,Failed login attempt for root - invalid user
+2026-07-18T09:02:20,185.220.101.34,administrator,login,failed,Failed login attempt for administrator - invalid user
+2026-07-18T09:02:23,185.220.101.34,admin,login,failed,Failed login attempt for admin - invalid password
+2026-07-18T09:02:26,185.220.101.34,oracle,login,failed,Failed login attempt for oracle - invalid user
+2026-07-18T09:02:29,185.220.101.34,postgres,login,failed,Failed login attempt for postgres - invalid user
+2026-07-18T09:02:32,185.220.101.34,admin,login,failed,Failed login attempt for admin - invalid password
+2026-07-18T09:02:35,185.220.101.34,admin,login,failed,Failed login attempt for admin - invalid password
+2026-07-18T09:02:38,185.220.101.34,admin,login,failed,Failed login attempt for admin - invalid password
+2026-07-18T10:30:00,10.0.4.21,alice,file_access,success,Opened quarterly report spreadsheet
+2026-07-18T11:45:12,10.0.4.30,charlie,login,failed,Failed login - invalid password
+2026-07-18T11:46:01,10.0.4.30,charlie,login,success,User charlie logged in successfully
+2026-07-18T13:22:47,10.0.4.25,dave,sudo,success,dave executed sudo apt update
+2026-07-19T02:14:55,91.240.118.172,svc_backup,login,success,Service account svc_backup logged in
+2026-07-19T02:17:23,91.240.118.172,svc_backup,privilege,success,svc_backup added to administrators group
+2026-07-19T02:19:08,91.240.118.172,svc_backup,config_change,success,Windows Defender real-time protection disabled
+2026-07-19T02:25:41,91.240.118.172,svc_backup,file_transfer,success,Large outbound data transfer detected - possible exfiltration
+2026-07-18T14:05:33,10.0.4.22,bob,file_access,denied,Access denied to /etc/shadow
+2026-07-18T15:11:09,10.0.4.40,eve,web_request,blocked,Blocked request containing SQL injection payload ' OR 1=1--

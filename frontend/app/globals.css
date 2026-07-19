@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #0b1120;
+  --color-panel: #111a2e;
+  --color-panel-light: #1a2540;
+  --color-edge: #233150;
+  --font-family-mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+}
+
+body {
+  background: var(--color-surface);
+  color: #dbe4f3;
+}
+
+::selection {
+  background: #2f4a8a;
+}

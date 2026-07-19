@@ -1,7 +1,9 @@
+import hmac
+import os
 import uuid
 from collections import Counter
 
-from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import Depends, FastAPI, File, Header, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import desc, func, or_
 from sqlalchemy.orm import Session
@@ -23,6 +25,10 @@ app.add_middleware(
 )
 
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024  # 20 MB
+
+# When ADMIN_KEY is set (e.g. on the hosted deployment), destructive endpoints
+# require it. When unset (local development), they stay open for convenience.
+ADMIN_KEY = os.environ.get("ADMIN_KEY")
 
 
 @app.post("/api/upload", response_model=schemas.UploadResult)
@@ -169,7 +175,12 @@ def get_stats(db: Session = Depends(get_db)):
 
 
 @app.delete("/api/logs")
-def clear_logs(db: Session = Depends(get_db)):
+def clear_logs(
+    db: Session = Depends(get_db),
+    x_admin_key: str | None = Header(default=None),
+):
+    if ADMIN_KEY and not hmac.compare_digest(x_admin_key or "", ADMIN_KEY):
+        raise HTTPException(status_code=403, detail="Invalid admin key.")
     deleted = db.query(models.LogEntry).delete()
     db.commit()
     return {"deleted": deleted}

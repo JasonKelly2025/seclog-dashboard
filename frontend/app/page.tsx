@@ -74,10 +74,15 @@ export default function Dashboard() {
   }
 
   async function handleClear() {
-    if (!confirm("Delete all ingested log entries?")) return;
-    await clearLogs();
-    setPage(1);
-    refresh();
+    const adminKey = prompt("Enter the admin key to delete all log entries:");
+    if (adminKey === null) return;
+    try {
+      await clearLogs(adminKey);
+      setPage(1);
+      refresh();
+    } catch (e) {
+      setApiError(e instanceof Error ? e.message : "Failed to clear logs");
+    }
   }
 
   return (

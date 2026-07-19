@@ -79,6 +79,11 @@ export async function uploadFile(file: File): Promise<UploadResult> {
   return handle(await fetch("/api/upload", { method: "POST", body: form }));
 }
 
-export async function clearLogs(): Promise<{ deleted: number }> {
-  return handle(await fetch("/api/logs", { method: "DELETE" }));
+export async function clearLogs(adminKey: string): Promise<{ deleted: number }> {
+  return handle(
+    await fetch("/api/logs", {
+      method: "DELETE",
+      headers: { "X-Admin-Key": adminKey },
+    })
+  );
 }

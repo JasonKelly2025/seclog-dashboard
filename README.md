@@ -76,4 +76,8 @@ The app deploys as two services that auto-update on every `git push` to `main`:
 | POST | `/api/upload` | Multipart file upload; parses, scores, and stores entries |
 | GET | `/api/logs` | Search/filter/sort/paginate entries (`q`, `severity`, `min_score`, `sort_by`, `page`…) |
 | GET | `/api/stats` | Severity breakdown, riskiest IPs and accounts |
-| DELETE | `/api/logs` | Clear all entries |
+| DELETE | `/api/logs` | Clear all entries (requires `X-Admin-Key` header when `ADMIN_KEY` is set) |
+
+## Admin key
+
+Set an `ADMIN_KEY` environment variable on the backend (Render dashboard → the service → Environment) to protect the "Clear all" action. When set, deleting logs requires entering that key in the UI prompt. When unset (local development), clearing stays open.

@@ -58,7 +58,9 @@ Drag either file onto the upload zone and watch the table populate with scored e
 
 ## Parser
 
-The parser accepts generic CSV, JSON arrays, wrapped JSON (`{"logs": [...]}`), and NDJSON. Common field aliases (`src_ip`, `@timestamp`, `msg`, `result`, …) are mapped onto a normalized schema: timestamp, source IP, username, event type, status, message. If no IP field exists, one is scraped from the message text. Unmapped fields are preserved in the raw payload.
+The parser accepts generic CSV, JSON arrays, wrapped JSON (`{"logs": [...]}`), NDJSON, and plain text (`.txt`/`.log`, one event per line — syslog, Apache access logs, application logs). Common field aliases (`src_ip`, `@timestamp`, `msg`, `result`, …) are mapped onto a normalized schema: timestamp, source IP, username, event type, status, message. For plain-text lines, the timestamp, source IP, and username are extracted with pattern matching. Unmapped fields are preserved in the raw payload.
+
+A plain-text example lives at `examples/app_server.txt` (kept out of `backend/sample_logs/` so the seeded demo set stays at exactly 32 events).
 
 ## Deployment (Vercel + Render)
 

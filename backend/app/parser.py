@@ -34,9 +34,28 @@ TIMESTAMP_FORMATS = [
     "%m/%d/%Y %I:%M:%S %p",
     "%b %d %H:%M:%S",
     "%d %b %Y %H:%M:%S",
+    "%d/%b/%Y:%H:%M:%S %z",
+    "%d/%b/%Y:%H:%M:%S",
 ]
 
 IPV4_RE = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
+
+# Timestamp shapes commonly found at the start of plain-text log lines.
+LINE_TIMESTAMP_RES = [
+    re.compile(r"\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?"),
+    re.compile(r"\d{2}/\w{3}/\d{4}:\d{2}:\d{2}:\d{2}(?:\s[+-]\d{4})?"),  # Apache CLF
+    re.compile(r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}"),  # syslog
+    re.compile(r"\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}"),
+]
+
+# Username shapes in free-form text, ordered by specificity.
+LINE_USERNAME_RES = [
+    re.compile(r"\buser(?:name)?[=:]\s*([\w.@-]+)", re.IGNORECASE),
+    re.compile(r"\binvalid user ([\w.@-]+)", re.IGNORECASE),
+    re.compile(r"\b(?:password|login|logon|session|authentication) for (?:user )?['\"]?([\w.@-]+)['\"]?", re.IGNORECASE),
+    re.compile(r"\bfor user ['\"]?([\w.@-]+)['\"]?", re.IGNORECASE),
+    re.compile(r"\buser ['\"]?([\w.@-]+)['\"]? (?:logged|login|logon|authenticated|failed)", re.IGNORECASE),
+]
 
 
 class ParseError(Exception):
@@ -150,6 +169,36 @@ def _parse_csv(content: str) -> list[dict[str, Any]]:
     return [dict(row) for row in reader]
 
 
+def _parse_line(line: str) -> dict[str, Any]:
+    record: dict[str, Any] = {"message": line}
+
+    for pattern in LINE_TIMESTAMP_RES:
+        match = pattern.search(line)
+        if match:
+            record["timestamp"] = match.group(0)
+            break
+
+    for pattern in LINE_USERNAME_RES:
+        match = pattern.search(line)
+        if match:
+            record["username"] = match.group(1)
+            break
+
+    # _normalize_record scrapes the IP out of the message if present.
+    return record
+
+
+def _parse_plaintext(content: str) -> list[dict[str, Any]]:
+    records = [
+        _parse_line(line.strip())
+        for line in content.splitlines()
+        if line.strip()
+    ]
+    if not records:
+        raise ParseError("File contains no non-empty lines.")
+    return records
+
+
 def parse_file(filename: str, content: bytes) -> list[dict[str, Any]]:
     """Return a list of normalized log records from an uploaded file."""
     try:
@@ -162,12 +211,17 @@ def parse_file(filename: str, content: bytes) -> list[dict[str, Any]]:
         records = _parse_json(text)
     elif name.endswith((".csv", ".tsv")):
         records = _parse_csv(text)
+    elif name.endswith((".txt", ".log")):
+        records = _parse_plaintext(text)
     else:
-        # Unknown extension: try JSON first, then CSV.
+        # Unknown extension: try JSON, then CSV, then fall back to plain text.
         try:
             records = _parse_json(text)
         except ParseError:
-            records = _parse_csv(text)
+            try:
+                records = _parse_csv(text)
+            except (ParseError, csv.Error):
+                records = _parse_plaintext(text)
 
     if not records:
         raise ParseError("No records found in file.")

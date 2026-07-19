@@ -60,7 +60,7 @@ export default function UploadZone({ onUploaded }: { onUploaded: (r: UploadResul
           {busy ? "Parsing and scoring…" : "Drop raw log files here or click to browse"}
         </p>
         <p className="mt-1 text-sm text-slate-400">
-          CSV, JSON, and NDJSON supported. Entries are parsed, normalized, and scored on upload.
+          CSV, JSON, NDJSON, and plain text (.txt/.log) supported. Entries are parsed, normalized, and scored on upload.
         </p>
       </div>
 

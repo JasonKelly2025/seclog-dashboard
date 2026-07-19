@@ -1,0 +1,12 @@
+2026-07-19 07:58:01 INFO Server started, listening on 0.0.0.0:8443
+2026-07-19 08:02:13 INFO User alice logged in from 10.0.4.21
+Jul 19 08:14:42 web01 sshd[2841]: Failed password for admin from 185.220.101.34 port 52814 ssh2
+Jul 19 08:14:45 web01 sshd[2841]: Failed password for admin from 185.220.101.34 port 52815 ssh2
+Jul 19 08:14:48 web01 sshd[2843]: Invalid user oracle from 185.220.101.34 port 52820
+Jul 19 08:14:51 web01 sshd[2843]: Failed password for invalid user oracle from 185.220.101.34 port 52820 ssh2
+Jul 19 08:14:54 web01 sshd[2845]: Failed password for root from 185.220.101.34 port 52830 ssh2
+2026-07-19 09:20:07 WARN Access denied to /admin/config for user=guest from 10.0.4.77
+203.0.113.50 - frank [19/Jul/2026:10:05:22 +0000] "GET /login HTTP/1.1" 200 1043
+203.0.113.50 - frank [19/Jul/2026:10:05:31 +0000] "POST /login HTTP/1.1" 401 233
+2026-07-19 11:31:44 ERROR Antivirus real-time protection disabled by user=svc_deploy
+2026-07-19 23:52:10 INFO Scheduled backup completed successfully

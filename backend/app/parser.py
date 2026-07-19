@@ -142,17 +142,22 @@ def _parse_json(content: str) -> list[dict[str, Any]]:
         pass
     # Fall back to NDJSON (one JSON object per line).
     records = []
+    total_lines = 0
     for line in content.splitlines():
         line = line.strip()
         if not line:
             continue
+        total_lines += 1
         try:
             obj = json.loads(line)
             if isinstance(obj, dict):
                 records.append(obj)
         except json.JSONDecodeError:
             continue
-    if not records:
+    # Require a majority of lines to be JSON; otherwise the file is likely
+    # plain text with an incidental JSON-looking line, and the plaintext
+    # parser will preserve every line instead of silently dropping most.
+    if not records or len(records) / total_lines < 0.5:
         raise ParseError("File is not valid JSON, a JSON array, or NDJSON.")
     return records
 
@@ -212,7 +217,15 @@ def parse_file(filename: str, content: bytes) -> list[dict[str, Any]]:
     elif name.endswith((".csv", ".tsv")):
         records = _parse_csv(text)
     elif name.endswith((".txt", ".log")):
-        records = _parse_plaintext(text)
+        # A .txt file may still hold JSON/NDJSON; sniff the content rather
+        # than trusting the extension.
+        if text.lstrip()[:1] in ("{", "["):
+            try:
+                records = _parse_json(text)
+            except ParseError:
+                records = _parse_plaintext(text)
+        else:
+            records = _parse_plaintext(text)
     else:
         # Unknown extension: try JSON, then CSV, then fall back to plain text.
         try:
